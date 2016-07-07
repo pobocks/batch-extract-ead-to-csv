@@ -1,5 +1,5 @@
 from lxml import etree
-import os, glob, re
+import os, glob, re, argparse
 
 def lenTest(path,tree):
   return len(tree.xpath(path))
@@ -72,7 +72,25 @@ def getScopeContent(genPath,tree):
         scopeAndContent = scopeAndContent + etree.tostring(para, encoding='UTF-8', method='text').strip() + "\u000a\u000a"
     scopeAndContent = cleanerApp(scopeAndContent)
 
-directory = "/Users/rtillman/Documents/Code/FindingAidsWork_Apparently_Dont_Batch_Ingest/samples" # Hardcoded. May need to be replaced.
+# Parse arguments, provide -h/--help usage instructions
+argparser = argparse.ArgumentParser(
+  description='''Batch process a subset of content from EAD files into a CSV file
+
+  Pulls out the contents of `<titleproper>`, `<scopecontent>` (all paragraphs), and children of `<origination>` and puts them into a CSV under `dc:title`, `dc:description`, and `dc:creator`. Multiple variables are separated by `|` and multiple paragraphs in `<scopecontent>` are separated by unicode line breaks. Quotation marks are replaced by unicode quotation marks in order to allow each section to be wrapped in quotation marks for safety.''')
+
+argparser.add_argument('input_dir',
+                       metavar='DIR',
+                       type=str,
+                       help='input directory containing EAD files',
+                       # Replace with your own directory if desired
+                       default='/Users/rtillman/Documents/Code/FindingAidsWork_Apparently_Dont_Batch_Ingest/samples'
+)
+argparser.add_argument('output_filename', metavar='OUT', default=None, help='output CSV file (Optional, prompt if not provided)')
+
+args = argparser.parse_args()
+
+directory = os.path.realpath(args.input_dir)
+output = args.output_filename or raw_input("What do you want to call the file? ")
 
 titleXPath = "/ead/control/filedesc/titlestmt/titleproper"
 scopeXPath = "/ead/archdesc/scopecontent"
@@ -110,5 +128,4 @@ def createCSV(directory, outputFile):
         line = typeString + "," + ownerString  + "," + accessString + "," + each + "," + titleString + "," + scopeAndContent + "," + creator + "," + identifierString + "," + sourceString + "\n"
         f.write(line)
 
-output = raw_input("What do you want to call the file? ")
 createCSV(directory,output)

@@ -8,7 +8,11 @@ The extractor adds hardcoded fields for `type`, `owner`, and `access` and the fi
 
 ## To use
 
-1. Edit variable `directory` (line 61) or turn it into a `raw_input` string and add to the end.
-2. Edit appropriate lines in `createCSV` (line 72). Lines which should be considered have comments explaining the internal uses.
-3. Make any decisions in line 11 re: the desired separator between `<part>` elements
-4. Run `python process.py`
+1. Edit appropriate lines in `createCSV` (line 90). Lines which should be considered have comments explaining the internal uses.
+2. Make any decisions in line 11 re: the desired separator between `<part>` elements
+3. Optionally alter the default directory operated on (line 72)
+4. Run `python process.py`  Optionally, you can provide a directory and output CSV filename as positional arguments, for example:
+
+  ```Shell
+  python process.py /path/to/my/eads my_output.csv
+  ```
